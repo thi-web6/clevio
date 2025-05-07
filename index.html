@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="description" content="Fruit Math Game - SLB Edition, permainan edukasi matematika untuk anak-anak SLB tunagrahita. Belajar berhitung dengan buah-buahan secara interaktif dan menyenangkan!" />
+  <meta name="keywords" content="permainan edukasi, matematika anak, SLB tunagrahita, belajar berhitung, permainan interaktif, fruit math game" />
+  <meta name="author" content="SLB Game Developer" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#fff176" />
+  <link rel="canonical" href="https://thi-web6.github.io/clevio/" />
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="Fruit Math Game - SLB Edition" />
+  <meta property="og:description" content="Mainkan Fruit Math Game, permainan edukasi matematika untuk anak-anak SLB tunagrahita. Hitung buah-buahan dan dapatkan bintang!" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thi-web6.github.io/clevio/" />
+  <meta property="og:image" content="https://thi-web6.github.io/clevio/assets/images/metataggg.png" />
+  <meta property="og:locale" content="id_ID" />
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fruit Math Game - SLB Edition" />
+  <meta name="twitter:description" content="Permainan edukasi matematika untuk anak-anak SLB tunagrahita. Belajar berhitung dengan buah-buahan!" />
+  <meta name="twitter:image" content="https://thi-web6.github.io/clevio/assets/images/metataggg.png" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://thi-web6.github.io/clevio/assets/images/metataggg.png" />
+  <!-- Preload Font for Performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" as="style" />
+  <title>Fruit Math Game - SLB Edition</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fff176, #81c784);
+      --btn-bg: #ffee58;
+      --btn-border: #f57c00;
+      --text-color: #c62828;
+      --shadow-color: rgba(245, 124, 0, 0.5);
+      --feedback-correct: #81c784;
+      --feedback-wrong: #ef5350;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Comic Neue', cursive, sans-serif;
+      background: var(--bg-gradient);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      user-select: none;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: var(--text-color);
+      text-align: center;
+      font-size: 4em;
+      text-shadow: 2px 2px 4px #ef9a9a;
+      margin-bottom: 0.3em;
+    }
+
+    #gameSettings {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .setting-option {
+      background: var(--btn-bg);
+      border: 4px solid var(--btn-border);
+      border-radius: 15px;
+      padding: 20px;
+      font-size: 2.5em;
+      color: var(--text-color);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      will-change: transform, box-shadow;
+    }
+
+    .setting-option:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px var(--shadow-color);
+    }
+
+    .setting-option:active:not(:disabled) {
+      transform: scale(0.95);
+      box-shadow: 0 4px 10px var(--shadow-color);
+    }
+
+    #container {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      flex-direction: row;
+      min-height: 600px;
+    }
+
+    .player-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      border-right: 4px dashed #c6282833;
+    }
+
+    .player-area:last-child {
+      border-right: none;
+    }
+
+    .player-title {
+      font-size: 2.5em;
+      color: var(--text-color);
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .score {
+      font-size: 2em;
+      color: #212121;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .question {
+      font-size: 5.5em;
+      margin-bottom: 40px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .choices {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .choice-btn {
+      flex: 1 1 45%;
+      min-width: 150px;
+      max-width: 200px;
+      height: 160px;
+      background: var(--btn-bg);
+      border: 4px solid var(--btn-border);
+      border-radius: 20px;
+      font-size: 4em;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 5px 15px var(--shadow-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform, box-shadow;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px var(--shadow-color);
+    }
+
+    .choice-btn:active:not(:disabled) {
+      transform: scale(0.95);
+      box-shadow: 0 2px 10px var(--shadow-color);
+    }
+
+    .choice-btn:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    .feedback-area {
+      font-size: 2em;
+      color: #212121;
+      padding: 15px;
+      border-radius: 15px;
+      margin: 20px 0;
+      text-align: center;
+      display: none;
+      width: 80%;
+    }
+
+    #resultContainer {
+      display: none;
+      background: var(--bg-gradient);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 900px;
+      width: 90%;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+    }
+
+    #resultMessage {
+      font-size: 3em;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+
+    #resultAnimation {
+      margin: 30px 0;
+      font-size: 6em;
+      line-height: 1;
+    }
+
+    #resultScore {
+      font-size: 2.5em;
+      color: #212121;
+      margin-bottom: 20px;
+    }
+
+    .action-btn {
+      background: #ef5350;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 20px 40px;
+      font-size: 2em;
+      cursor: pointer;
+      box-shadow: 0 6px 15px #ef5350aa;
+      transition: transform 0.3s, box-shadow 0.3s;
+      will-change: transform, box-shadow;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px #ef5350aa;
+    }
+
+    .action-btn:active:not(:disabled) {
+      transform: scale(0.95);
+      box-shadow: 0 4px 10px #ef5350aa;
+    }
+
+    .correct {
+      animation: popIn 0.5s ease forwards;
+      background-color: var(--feedback-correct) !important;
+      color: #1b5e20 !important;
+      border-color: #1b5e20 !important;
+    }
+
+    .wrong {
+      animation: shake 0.5s ease forwards;
+      background-color: var(--feedback-wrong) !important;
+      color: #b71c1c !important;
+      border-color: #b71c1c !important;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-15px); }
+      40% { transform: translateX(15px); }
+      60% { transform: translateX(-15px); }
+      80% { transform: translateX(15px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes celebrate {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .celebrate {
+      animation: celebrate 0.8s ease infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #f57c00, 0 0 20px #f57c00; border-color: #f57c00; }
+      50% { box-shadow: 0 0 30px #f57c00, 0 0 40px #f57c00; border-color: #ff9800; }
+      100% { box-shadow: 0 0 10px #f57c00, 0 0 20px #f57c00; border-color: #f57c00; }
+    }
+
+    .hint-glow {
+      animation: glow 0.8s ease infinite;
+    }
+
+    #accessibilityControls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .accessibility-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      cursor: pointer;
+      font-size: 25px;
+      color: #212121;
+    }
+
+    #helpOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .help-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 700px;
+      width: 90%;
+      position: relative;
+    }
+
+    .close-help {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 30px;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #ef5350;
+      color: white;
+    }
+
+    .help-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .help-number {
+      width: 40px;
+      height: 40px;
+      background: var(--text-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+
+    body.high-contrast {
+      background: black;
+    }
+
+    body.high-contrast #container,
+    body.high-contrast #gameSettings,
+    body.high-contrast .help-content,
+    body.high-contrast #resultContainer {
+      background: black;
+      border: 4px solid yellow;
+    }
+
+    body.high-contrast h1,
+    body.high-contrast .player-title,
+    body.high-contrast .help-step {
+      color: yellow;
+      text-shadow: none;
+    }
+
+    body.high-contrast .choice-btn,
+    body.high-contrast .setting-option {
+      background: black;
+      color: white;
+      border: 4px solid yellow;
+    }
+
+    body.high-contrast .action-btn {
+      background: yellow;
+      color: black;
+    }
+
+    body.high-contrast .score,
+    body.high-contrast .question,
+    body.high-contrast .feedback-area {
+      color: white;
+    }
+
+    @media (max-width: 1080px) {
+      h1 { font-size: 3em; }
+      .player-title { font-size: 2em; }
+      .question { font-size: 4em; }
+      .choice-btn { height: 120px; font-size: 3em; min-width: 120px; }
+      .score { font-size: 1.8em; }
+      .feedback-area { font-size: 1.8em; }
+      .setting-option, .action-btn { font-size: 1.8em; padding: 15px 25px; }
+      .help-step { font-size: 1.5em; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 2.5em; }
+      .player-title { font-size: 1.8em; }
+      .question { font-size: 3.5em; }
+      .choice-btn { height: 100px; font-size: 2.5em; min-width: 100px; }
+      .score { font-size: 1.5em; }
+      .feedback-area { font-size: 1.5em; }
+      .setting-option, .action-btn { font-size: 1.5em; padding: 12px 20px; }
+      .help-step { font-size: 1.3em; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Audio elements for sound effects -->
+  <audio id="correctSound" src="assets/sound/benar.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="assets/sound/salah.mp3" preload="auto"></audio>
+  <audio id="winSound" src="assets/sound/gameselesai.mp3" preload="auto"></audio>
+
+  <!-- Accessibility controls -->
+  <div id="accessibilityControls">
+    <div class="accessibility-btn" id="muteToggle" title="Senyapkan Suara">🔇</div>
+    <div class="accessibility-btn" id="contrastToggle" title="Mode Kontras Tinggi">A</div>
+    <div class="accessibility-btn" id="helpButton" title="Bantuan">?</div>
+  </div>
+
+  <!-- Help overlay -->
+  <div id="helpOverlay">
+    <div class="help-content">
+      <div class="close-help">&times;</div>
+      <h2>Cara Bermain</h2>
+      <div class="help-step">
+        <div class="help-number">1</div>
+        <div>Pilih: Main Sendiri, Berdua, atau Latihan</div>
+      </div>
+      <div class="help-step">
+        <div class="help-number">2</div>
+        <div>Hitung buah-buahan 🍎 + 🍌</div>
+      </div>
+      <div class="help-step">
+        <div class="help-number">3</div>
+        <div>Pilih jawaban yang benar</div>
+      </div>
+      <div class="help-step">
+        <div class="help-number">4</div>
+        <div>Dapatkan bintang ⭐ untuk jawaban benar!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game title -->
+  <h1>Fruit Math 🍎 + 🍌 = ?</h1>
+
+  <!-- Game mode selection -->
+  <div id="gameSettings">
+    <div class="setting-option" data-mode="single">Main Sendiri</div>
+    <div class="setting-option" data-mode="dual">Main Berdua</div>
+    <div class="setting-option" data-mode="practice">Latihan</div>
+  </div>
+
+  <!-- Game container -->
+  <div id="container">
+    <div class="player-area" id="player1">
+      <div class="player-title">Pemain 1</div>
+      <div class="score">Skor: <span id="score1">0</span></div>
+      <div class="question" id="question1">...</div>
+      <div class="choices" id="choices1"></div>
+      <div class="feedback-area" id="feedback1"></div>
+    </div>
+    <div class="player-area" id="player2" style="display:none;">
+      <div class="player-title">Pemain 2</div>
+      <div class="score">Skor: <span id="score2">0</span></div>
+      <div class="question" id="question2">...</div>
+      <div class="choices" id="choices2"></div>
+      <div class="feedback-area" id="feedback2"></div>
+    </div>
+  </div>
+
+  <!-- Result screen -->
+  <div id="resultContainer">
+    <div id="resultMessage">Selamat!</div>
+    <div id="resultAnimation">🏆</div>
+    <div id="resultScore">Skor Akhir: 0</div>
+    <button class="action-btn" id="playAgainBtn">Main Lagi</button>
+  </div>
+
+  <script>
+  // Script yang diperbaiki untuk Fruit Math Game
+(() => {
+  // Fruit emojis
+  const fruits = [
+    { emoji: "🍎", name: "Apel" },
+    { emoji: "🍌", name: "Pisang" },
+    { emoji: "🍇", name: "Anggur" },
+    { emoji: "🍓", name: "Strawberry" },
+    { emoji: "🍊", name: "Jeruk" },
+    { emoji: "🍉", name: "Semangka" },
+    { emoji: "🍍", name: "Nanas" },
+    { emoji: "🥭", name: "Mangga" }
+  ];
+
+  // Game configuration (easy mode only)
+  const gameConfig = {
+    maxDigit: 3,     // Max number of each fruit
+    choiceCount: 3,  // Number of answer choices
+    maxQuestions: 5  // Total questions (ignored in practice mode)
+  };
+
+  // Game state
+  let gameMode = null;
+  // Perbaikan untuk mode berdua: simpan timeout untuk masing-masing pemain
+  let hintTimeouts = [null, null];
+  let soundEnabled = true;
+  let highContrastMode = false;
+  let players = [
+    { score: 0, currentQuestion: 0, currentAnswer: null },
+    { score: 0, currentQuestion: 0, currentAnswer: null }
+  ];
+
+  // DOM elements
+  const settingsOptions = document.querySelectorAll('.setting-option');
+  const container = document.getElementById('container');
+  const gameSettings = document.getElementById('gameSettings');
+  const player1Area = document.getElementById('player1');
+  const player2Area = document.getElementById('player2');
+  const resultContainer = document.getElementById('resultContainer');
+  const playAgainBtn = document.getElementById('playAgainBtn');
+  const muteToggle = document.getElementById('muteToggle');
+  const contrastToggle = document.getElementById('contrastToggle');
+  const helpButton = document.getElementById('helpButton');
+  const helpOverlay = document.getElementById('helpOverlay');
+  const closeHelp = document.querySelector('.close-help');
+
+  // Audio elements
+  const sounds = {
+    correct: document.getElementById('correctSound'),
+    wrong: document.getElementById('wrongSound'),
+    win: document.getElementById('winSound')
+  };
+
+  // Initialize game
+  function init() {
+    // Gunakan hanya satu event listener untuk setiap elemen
+    settingsOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log(`Mode selected: ${option.dataset.mode}`);
+        gameMode = option.dataset.mode;
+        startGame();
+      });
+    });
+
+    playAgainBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Play again button clicked');
+      resetGame();
+    });
+
+    muteToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Mute toggle clicked');
+      toggleSound();
+    });
+
+    contrastToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Contrast toggle clicked');
+      toggleHighContrast();
+    });
+
+    helpButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Help button clicked');
+      showHelp();
+    });
+
+    closeHelp.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Close help clicked');
+      hideHelp();
+    });
+
+    // Keyboard navigation for TV remote
+    document.addEventListener('keydown', handleKeyboard);
+  }
+
+  // Start game
+  function startGame() {
+    console.log(`Starting game in ${gameMode} mode`);
+    gameSettings.style.display = 'none';
+    container.style.display = 'flex';
+
+    // Reset game state
+    clearAllTimeouts();
+    
+    players[0].score = 0;
+    players[0].currentQuestion = 0;
+    document.getElementById('score1').textContent = '0';
+
+    if (gameMode === 'dual') {
+      player2Area.style.display = 'flex';
+      players[1].score = 0;
+      players[1].currentQuestion = 0;
+      document.getElementById('score2').textContent = '0';
+    } else {
+      player2Area.style.display = 'none';
+    }
+
+    generateQuestion(0);
+    if (gameMode === 'dual') generateQuestion(1);
+  }
+
+  // Bersihkan semua timeout
+  function clearAllTimeouts() {
+    for (let i = 0; i < hintTimeouts.length; i++) {
+      if (hintTimeouts[i]) {
+        clearTimeout(hintTimeouts[i]);
+        hintTimeouts[i] = null;
+      }
+    }
+  }
+
+  // Generate question for a player
+  function generateQuestion(playerIndex) {
+    // Clear timeout untuk pemain spesifik ini
+    if (hintTimeouts[playerIndex]) {
+      clearTimeout(hintTimeouts[playerIndex]);
+      hintTimeouts[playerIndex] = null;
+    }
+
+    const playerNum = playerIndex + 1;
+    const fruitA = fruits[Math.floor(Math.random() * fruits.length)];
+    const fruitB = fruits[Math.floor(Math.random() * fruits.length)];
+    const countA = Math.floor(Math.random() * gameConfig.maxDigit) + 1;
+    const countB = Math.floor(Math.random() * gameConfig.maxDigit) + 1;
+    const correctAnswer = countA + countB;
+
+    players[playerIndex].currentAnswer = correctAnswer;
+
+    const questionDiv = document.getElementById(`question${playerNum}`);
+    let questionText = '';
+    for (let i = 0; i < countA; i++) questionText += fruitA.emoji;
+    questionText += ' + ';
+    for (let i = 0; i < countB; i++) questionText += fruitB.emoji;
+    questionText += ' = ?';
+    questionDiv.innerHTML = questionText;
+    console.log(`Generated question for player ${playerNum}: ${questionText}, answer: ${correctAnswer}`);
+
+    const choicesDiv = document.getElementById(`choices${playerNum}`);
+    choicesDiv.innerHTML = '';
+
+    const answers = [correctAnswer];
+    while (answers.length < gameConfig.choiceCount) {
+      let wrongAnswer;
+      do {
+        wrongAnswer = correctAnswer + Math.floor(Math.random() * 7) - 3;
+      } while (wrongAnswer <= 0 || answers.includes(wrongAnswer));
+      answers.push(wrongAnswer);
+    }
+
+    shuffleArray(answers);
+
+    answers.forEach(answer => {
+      const button = document.createElement('button');
+      button.classList.add('choice-btn');
+      button.textContent = answer;
+      button.dataset.value = answer;
+      
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log(`Player ${playerNum} selected answer: ${answer}`);
+        checkAnswer(button, answer, playerIndex);
+      });
+      
+      choicesDiv.appendChild(button);
+    });
+
+    // Lebih diperjelas bahwa ini untuk pemain tertentu
+    console.log(`Setting hint timeout for player ${playerNum}`);
+    hintTimeouts[playerIndex] = setTimeout(() => {
+      const correctButton = Array.from(choicesDiv.querySelectorAll('.choice-btn'))
+        .find(btn => parseInt(btn.dataset.value) === correctAnswer);
+      if (correctButton) {
+        correctButton.classList.add('hint-glow');
+        console.log(`Hint glow activated for player ${playerNum}`);
+      }
+    }, 5000); // Dipercepat menjadi 5 detik untuk testing
+  }
+
+  // Check answer
+  function checkAnswer(button, selectedAnswer, playerIndex) {
+    // Hanya bersihkan timeout untuk pemain ini
+    if (hintTimeouts[playerIndex]) {
+      clearTimeout(hintTimeouts[playerIndex]);
+      hintTimeouts[playerIndex] = null;
+    }
+
+    const playerNum = playerIndex + 1;
+    const correctAnswer = players[playerIndex].currentAnswer;
+    const choicesDiv = document.getElementById(`choices${playerNum}`);
+    const feedbackDiv = document.getElementById(`feedback${playerNum}`);
+
+    Array.from(choicesDiv.querySelectorAll('.choice-btn')).forEach(btn => {
+      btn.disabled = true;
+      btn.classList.remove('hint-glow');
+    });
+
+    if (parseInt(selectedAnswer) === correctAnswer) {
+      button.classList.add('correct');
+      try {
+        if (soundEnabled && sounds.correct) {
+          sounds.correct.currentTime = 0;
+          sounds.correct.play().catch(e => console.error('Error playing correct sound:', e));
+        }
+      } catch (e) {
+        console.error("Sound error:", e);
+      }
+      
+      players[playerIndex].score += 10;
+      document.getElementById(`score${playerNum}`).textContent = players[playerIndex].score;
+      showFeedback(playerNum, 'Benar! ⭐', true);
+    } else {
+      button.classList.add('wrong');
+      try {
+        if (soundEnabled && sounds.wrong) {
+          sounds.wrong.currentTime = 0;
+          sounds.wrong.play().catch(e => console.error('Error playing wrong sound:', e));
+        }
+      } catch (e) {
+        console.error("Sound error:", e);
+      }
+      
+      const correctButton = Array.from(choicesDiv.querySelectorAll('.choice-btn'))
+        .find(btn => parseInt(btn.dataset.value) === correctAnswer);
+      if (correctButton) correctButton.classList.add('correct');
+      showFeedback(playerNum, 'Coba Lagi!', false);
+    }
+
+    setTimeout(() => {
+      if (gameMode !== 'practice') {
+        players[playerIndex].currentQuestion++;
+        if (players[playerIndex].currentQuestion >= gameConfig.maxQuestions) {
+          if (gameMode === 'single' ||
+              (gameMode === 'dual' && players[0].currentQuestion >= gameConfig.maxQuestions &&
+               players[1].currentQuestion >= gameConfig.maxQuestions)) {
+            endGame();
+          } else {
+            document.getElementById(`player${playerNum}`).classList.add('completed');
+            document.getElementById(`question${playerNum}`).textContent = 'Selesai!';
+            document.getElementById(`choices${playerNum}`).innerHTML = '';
+          }
+        } else {
+          generateQuestion(playerIndex);
+        }
+      } else {
+        generateQuestion(playerIndex);
+      }
+    }, 2000);
+  }
+
+  // End game
+  function endGame() {
+    // Bersihkan semua timeout untuk mencegah permasalahan
+    clearAllTimeouts();
+    
+    try {
+      if (soundEnabled && sounds.win) {
+        sounds.win.currentTime = 0;
+        sounds.win.play().catch(e => console.error('Error playing win sound:', e));
+      }
+    } catch (e) {
+      console.error("Sound error:", e);
+    }
+
+    let resultMessage;
+    let finalScore;
+
+    if (gameMode === 'single') {
+      finalScore = players[0].score;
+      resultMessage = 'Hebat! Kamu Selesai!';
+    } else {
+      if (players[0].score > players[1].score) {
+        resultMessage = 'Pemain 1 Menang!';
+      } else if (players[1].score > players[0].score) {
+        resultMessage = 'Pemain 2 Menang!';
+      } else {
+        resultMessage = 'Seri!';
+      }
+      finalScore = `Pemain 1: ${players[0].score} - Pemain 2: ${players[1].score}`;
+    }
+
+    document.getElementById('resultMessage').textContent = resultMessage;
+    document.getElementById('resultScore').textContent = `Skor Akhir: ${finalScore}`;
+    document.getElementById('resultAnimation').classList.add('celebrate');
+    resultContainer.style.display = 'block';
+    console.log(`Game ended: ${resultMessage}, Score: ${finalScore}`);
+  }
+
+  // Reset game
+  function resetGame() {
+    console.log('Resetting game');
+    // Bersihkan semua timeout
+    clearAllTimeouts();
+    
+    players = [
+      { score: 0, currentQuestion: 0, currentAnswer: null },
+      { score: 0, currentQuestion: 0, currentAnswer: null }
+    ];
+    document.getElementById('score1').textContent = '0';
+    document.getElementById('score2').textContent = '0';
+    player1Area.classList.remove('completed');
+    player2Area.classList.remove('completed');
+    resultContainer.style.display = 'none';
+    gameSettings.style.display = 'flex';
+    container.style.display = 'none';
+    document.getElementById('resultAnimation').classList.remove('celebrate');
+  }
+
+  // Show feedback
+  function showFeedback(playerNum, message, isCorrect) {
+    const feedbackDiv = document.getElementById(`feedback${playerNum}`);
+    feedbackDiv.textContent = message;
+    feedbackDiv.style.display = 'block';
+    
+    feedbackDiv.style.backgroundColor = isCorrect ? '#81c784' : '#ef5350';
+    feedbackDiv.style.color = isCorrect ? '#1b5e20' : '#b71c1c';
+    
+    console.log(`Feedback for player ${playerNum}: ${message}`);
+    setTimeout(() => {
+      feedbackDiv.style.display = 'none';
+    }, 2000);
+  }
+
+  // Toggle sound
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    muteToggle.textContent = soundEnabled ? '🔇' : '🔊';
+    console.log(`Sound ${soundEnabled ? 'enabled' : 'disabled'}`);
+  }
+
+  // Toggle high contrast
+  function toggleHighContrast() {
+    highContrastMode = !highContrastMode;
+    document.body.classList.toggle('high-contrast');
+    console.log(`High contrast mode ${highContrastMode ? 'enabled' : 'disabled'}`);
+  }
+
+  // Show help
+  function showHelp() {
+    helpOverlay.style.display = 'flex';
+  }
+
+  // Hide help
+  function hideHelp() {
+    helpOverlay.style.display = 'none';
+  }
+
+  // Shuffle array
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  // Keyboard navigation
+  function handleKeyboard(e) {
+    if (gameSettings.style.display !== 'none') {
+      const options = Array.from(settingsOptions);
+      let currentIndex = options.findIndex(opt => document.activeElement === opt);
+      
+      // Jika tidak ada yang aktif, fokuskan ke pilihan pertama
+      if (currentIndex === -1) {
+        currentIndex = 0;
+        options[currentIndex].focus();
+        return;
+      }
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % options.length;
+        options[currentIndex].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentIndex = (currentIndex - 1 + options.length) % options.length;
+        options[currentIndex].focus();
+      } else if (e.key === 'Enter' && currentIndex >= 0) {
+        e.preventDefault();
+        options[currentIndex].click();
+      }
+    }
+  }
+
+  // Debugging helper function
+  function debugTimeouts() {
+    console.log("Current timeouts status:", hintTimeouts);
+  }
+
+  // Initialize game
+  // Tunggu sampai DOM sepenuhnya dimuat
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded, initializing game');
+    init();
+    
+    // Log untuk debugging
+    setInterval(() => {
+      debugTimeouts();
+    }, 5000);
+  });
+})();
+  </script>
+</body>
+</html>
